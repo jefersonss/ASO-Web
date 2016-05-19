@@ -1,0 +1,34 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cxf="http://camel.apache.org/schema/cxf"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:jaxrs-client="http://cxf.apache.org/jaxrs-client"
+	xmlns:soap="http://cxf.apache.org/bindings/soap" xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd http://cxf.apache.org/jaxrs-client 
+	   http://cxf.apache.org/schemas/jaxrs-client.xsd
+        http://cxf.apache.org/bindings/soap 
+		http://cxf.apache.org/schemas/configuration/soap.xsd
+		http://www.springframework.org/schema/util 
+		http://www.springframework.org/schema/util/spring-util.xsd
+        http://cxf.apache.org/transports/http/configuration
+        http://cxf.apache.org/schemas/configuration/http-conf.xsd">
+
+	<jaxrs-client:client id="patientService"
+		serviceClass="br.unisinos.aso.ct.PatientServiceCT" address="http://127.0.0.1:9080/aso/patient">
+		<!-- <jaxrs:headers> -->
+		<!-- <entry key="Accept" value="application/json" /> -->
+		<!-- </jaxrs:headers> -->
+		<jaxrs-client:headers>
+			<entry key="Accept" value="application/json" />
+		</jaxrs-client:headers>
+	</jaxrs-client:client>
+
+
+	<http-conf:conduit name="*.http-conduit">
+		<http-conf:client ConnectionTimeout="30000"
+			ReceiveTimeout="60000" Connection="Keep-Alive" />
+	</http-conf:conduit>
+</beans>
+   
