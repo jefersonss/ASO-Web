@@ -6,7 +6,6 @@ import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.collections.SetUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -15,6 +14,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.unisinos.aso.model.Patient;
 import br.unisinos.aso.model.PatientInfo;
@@ -30,7 +32,20 @@ public class PacientesController {
 	public ModelAndView index(HttpServletRequest request) throws Exception{
 		ModelAndView retVal = new ModelAndView("pacientes/search");
 		RestTemplate restTemplate = new RestTemplate();
-		Map<String, List<Patient>> patientsByRoom = restTemplate.getForObject("http://127.0.0.1:9080/aso/patient", Map.class);
+		
+		String json = restTemplate.getForObject("http://127.0.0.1:9080/aso/patient", String.class);
+		Map<String, List<Patient>> patientsByRoom = new HashMap<String, List<Patient>>();
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+	    //convert JSON string to Map
+			patientsByRoom = mapper.readValue(json, new TypeReference<HashMap<String, List<Patient>>>(){});
+		} catch (Exception e) {
+		     logger.info("Exception converting {} to map", json, e);
+		}
+
+		
+		
+//		Map<String, List<Patient>> patientsByRoom = restTemplate.getForObject("http://127.0.0.1:9080/aso/patient", Map.class);
 		Map<String, BigInteger> patientsByDisease = restTemplate.getForObject("http://127.0.0.1:9080/aso/patient/countByDisease", Map.class);
 		List<String> keysArray = new LinkedList<String>();
 		keysArray.addAll(patientsByDisease.keySet());
